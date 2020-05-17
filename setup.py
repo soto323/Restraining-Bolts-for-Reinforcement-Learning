@@ -1,14 +1,13 @@
+"""
+Restraining bolts Deep reinforcement learning package
+"""
 from setuptools import setup
+from setuptools import find_packages
 
-setup(
-    name='gym_minigrid',
-    version='1.0.1',
-    keywords='memory, environment, agent, rl, openaigym, openai-gym, gym',
-    url='https://github.com/maximecb/gym-minigrid',
-    description='Minimalistic gridworld package for OpenAI Gym',
-    packages=['gym_minigrid', 'gym_minigrid.envs'],
-    install_requires=[
-        'gym>=0.9.6',
-        'numpy>=1.15.0'
-    ]
-)
+setup(name='rb_drl',
+      version='0.1',
+      description="Restraining bolts Deep reinforcement learning package",
+      author='Michal',
+      packages=find_packages(),
+      zip_safe=False
+      )
