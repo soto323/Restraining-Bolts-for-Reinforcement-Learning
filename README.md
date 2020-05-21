@@ -16,7 +16,7 @@
 # Training
 
 ```
-$ python3 code/train.py
+$ python3 train.py
     --episodes 10000
     --env
     --algo dqn
