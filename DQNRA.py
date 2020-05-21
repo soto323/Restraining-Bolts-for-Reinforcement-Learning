@@ -167,19 +167,17 @@ class memory:
 
 
 
-
-
 class DQN:
-    
+    'new'
     def __init__(self, env):
         self.env = env
         self.memory_class = memory(100000)
         self.discount = 0.99
-        self.batch_size = 32
+        self.batch_size = 128
         self.EPS_START = 0.9
         self.EPS_END = 0.5
         self.steps_done = 0
-        self.EPS_DECAY = 200
+        self.EPS_DECAY = 100
         self.output_size = self.env.action_space.n
         self.d_len =  100000
         self.dq = deque(maxlen=self.d_len)
@@ -215,11 +213,18 @@ class DQN:
     def weightMatrix(self,name):
         with tf.variable_scope(name_or_scope=name,reuse=False):
             # defining the weights for it 
-            self.dense1 = tf.get_variable(name="dense1",shape=(147,128),initializer = tf.initializers.variance_scaling)
-            self.dense2 =  tf.get_variable(name="dense2",shape=(128,128),initializer=tf.initializers.variance_scaling)
-            self.dense3 =  tf.get_variable(name="dense3",shape=(128,128),initializer=tf.initializers.variance_scaling)
-            self.dense4 =  tf.get_variable(name="dense4",shape=(128,self.output_size),initializer=tf.initializers.variance_scaling)
-    
+            self.dense1 = tf.get_variable(name="dense1",shape=(147,128),initializer = tf.initializers.glorot_normal)
+            self.dense1Bias = tf.get_variable(name="dense1_bias",shape=(128),initializer=tf.initializers.glorot_normal)
+
+            self.dense2 =  tf.get_variable(name="dense2",shape=(128,128),initializer=tf.initializers.glorot_normal)
+            self.dense2Bias = tf.get_variable(name="dense2Bias",shape=(128),initializer=tf.initializers.glorot_normal)
+
+            self.dense3 =  tf.get_variable(name="dense3",shape=(128,128),initializer=tf.initializers.glorot_normal)
+            self.dense3Bias = tf.get_variable(name="dense3Bias",shape=(128),initializer=tf.initializers.glorot_normal)
+
+            self.dense4 =  tf.get_variable(name="dense4",shape=(128,self.output_size),initializer=tf.initializers.glorot_normal)
+            self.dense4Bias = tf.get_variable(name="dense4Bias",shape=(self.output_size),initializer=tf.initializers.glorot_normal)
+
             
             
             
@@ -231,16 +236,19 @@ class DQN:
         with tf.variable_scope(name,reuse=False):
             self.dense  = tf.matmul(self.x_input,self.dense1)
             self.dense  = tf.nn.relu(self.dense)
+            self.dense  = tf.add(self.dense,self.dense1Bias)
 
             self.dense  =  tf.matmul(self.dense,self.dense2)
-            self.dense  =  tf.nn.relu(self.dense)
+            self.dense  = tf.nn.relu(self.dense)
+            self.dense  =  tf.add(self.dense,self.dense2Bias)
 
             self.dense  = tf.matmul(self.dense,self.dense3)
-            self.dense  = tf.nn.relu(self.dense)
+            self.dense  =  tf.nn.relu(self.dense)
+            self.dense  = tf.add(self.dense,self.dense3Bias)
             
             self.output = tf.matmul(self.dense,self.dense4)
+            self.output =  tf.add(self.output,self.dense4Bias)
             self.output = tf.nn.softmax(self.output)
-
 
             trainable_param = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES,name)
             
@@ -262,7 +270,6 @@ class DQN:
             action = self.env.action_space.sample()
             
         else:
-            
             
             action_  = self.policy_network_output.eval(session = sess, feed_dict={self.x_input:state})[0]
             action  =  np.argmax(action_)
@@ -300,7 +307,7 @@ class DQN:
 
         # now we can apply the clipped grad values 
 
-        self.optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.001)
+        self.optimizer = tf.train.AdamOptimizer(learning_rate=0.0001)
         self.optimizer =  self.optimizer.apply_gradients(zip(clipped_grad,self.policy_network_param))
 
     def rememember(self,nextObservation,action,reward,observation,done):
@@ -327,7 +334,7 @@ class DQN:
             data = random.sample(self.dq,batch_size)
             
         return data 
-            
+
 
 
 class parser:
