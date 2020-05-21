@@ -23,7 +23,7 @@ def summary(tensor_collection,
     """Summary.
 
     usage:
-        1. summary(tensor)
+        1. summary(tensor)y
         2. summary([tensor_a, tensor_b])
         3. summary({tensor_a: 'a', tensor_b: 'b})
     """
