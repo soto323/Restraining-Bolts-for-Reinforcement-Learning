@@ -11,3 +11,16 @@
     ```bash
     python3 setup.py install
     ``` 
+    
+    
+# Training
+
+```
+$ python3 code/train.py
+    --episodes 10000
+    --env
+    --algo dqn
+    --gui False
+    --model_name
+    --rand_seed 42
+```
