@@ -25,7 +25,8 @@ import matplotlib.pyplot as plt
 import flloat
 from flloat.parser.ltlf import LTLfParser
 
-from DQNRA import *
+from models.run import *
+
 
 """parsing and configuration"""
 def parse_args():
@@ -81,10 +82,9 @@ def main(args):
 
     """ main loop """
     
-    run(sess, env, checkpoints_dir, n_episodes=args.episodes, gui=args.gui)
-     # TO DO: algorithm import
-     # algo define run
-    
+    run(sess=sess, env=env, algo=args.algo, checkpoints_dir = checkpoints_dir, n_episodes=args.episodes, gui=args.gui)
+
+
 
 
 if __name__ == "__main__":
