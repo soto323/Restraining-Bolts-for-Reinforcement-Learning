@@ -2,11 +2,8 @@
 __pycache__/
 *.py[cod]
 *$py.class
-models/*
 
-resources/train.tfrecords
-resources/test.tfrecords
-models/checkpoints
+
 logs/
 graphs/
 # C extensions
