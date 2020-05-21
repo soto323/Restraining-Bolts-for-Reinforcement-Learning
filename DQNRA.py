@@ -436,7 +436,7 @@ def run(sess, env, checkpoints_dir, n_episodes=100000, gui=False):
     updateNetwork = 4
     game_loss = 0
 
-    for each_episode in tqdm(range(episode_to_restore, episode_to_restore+n_episodes), total=nepisodes):
+    for each_episode in tqdm(range(episode_to_restore, episode_to_restore+n_episodes), total=n_episodes):
         obs  = env.reset()["image"]
         obs  = preprocessing(obs)
 

@@ -1,3 +1,4 @@
+
 import os
 import tqdm
 import re
@@ -12,7 +13,7 @@ logging.getLogger('tensorflow').disabled = True
 
 import tensorflow as tf
 import argparse
-tf.get_logger().setLevel('ERROR')
+#tf.get_logger().setLevel('ERROR')
 
 from gym_minigrid.wrappers import *
 
@@ -34,7 +35,7 @@ def parse_args():
     parser.add_argument('--env', type=str, default='MiniGrid-Unlock-v0', help='choose gym enviroement')
     parser.add_argument('--algo', type=str, default='dqn', help='Deep RL algorithm')
     parser.add_argument('--gui', type=bool, default=False, help='enable gui (nor recommended for training')
-    parser.add_argument('--git', type=str, default=None, help='path to model if starting from checkpoint')
+    parser.add_argument('--model_name', type=str, default=None, help='path to model if starting from checkpoint')
     parser.add_argument('--rand_seed', type=int, default=42, help='tf random seed')
 
     return parser.parse_args()
