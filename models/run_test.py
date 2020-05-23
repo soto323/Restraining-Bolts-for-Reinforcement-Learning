@@ -59,7 +59,7 @@ def run_a2c(sess, env, algo, checkpoints_dir, n_episodes=100000, gui=False, BATC
                 plt.imshow(env.render())
         
             # first thing we need to choose the action
-            action = ac_network.chooseAction(state, sess)
+            action = ac_network.chooseActionTest(state, sess)
             
             # now i can perform the step in the environment 
             
