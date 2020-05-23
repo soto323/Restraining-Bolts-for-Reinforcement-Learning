@@ -167,3 +167,6 @@ class DQN:
             data = random.sample(self.dq,batch_size)
             
         return data 
+
+def preprocessing(image):
+	return image.reshape(-1,147)

@@ -80,9 +80,16 @@ def main(args):
     env = gym.make(args.env)
     print("[*] success")
 
+    supported_algorithms = ['dqn', 'ddqn', 'a2c', 'pompdp']
+    assert args.algo in supported_algorithms, "Unsupported Algorithm! Please choose a supported one: {}".format(*supported_algorithms)
     """ main loop """
-    
-    run(sess=sess, env=env, algo=args.algo, checkpoints_dir = checkpoints_dir, n_episodes=args.episodes, gui=args.gui)
+    if args.algo in ['dqn', 'ddqn']:
+        run(sess=sess, env=env, algo=args.algo, checkpoints_dir = checkpoints_dir, n_episodes=args.episodes, gui=args.gui)
+    else:
+        run_a2c(sess=sess, env=env, algo=args.algo, checkpoints_dir = checkpoints_dir, n_episodes=args.episodes, gui=args.gui)
+
+
+
 
 
 

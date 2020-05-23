@@ -17,7 +17,8 @@ from models.parser import parser
 
 class DDQN:
 
-    def __init__(self):
+    def __init__(self, env):
+        self.env = env
         self.memory_class = memory(1000)
         self.discount = 0.95
         self.batch_size = 32
@@ -25,7 +26,7 @@ class DDQN:
         self.EPS_END = 0.5
         self.steps_done = 0
         self.EPS_DECAY = 200
-        self.output_size = env.action_space.n
+        self.output_size = self.env.action_space.n
         self.d_len = 10000
         self.dq = deque(maxlen=self.d_len)
 
@@ -93,7 +94,7 @@ class DDQN:
 
             return self.output, trainable_param
 
-    def act(self, state):
+    def act(self, state, sess):
         # to get what action to choose
 
         # we need to do exploration vs exploitation
@@ -105,11 +106,11 @@ class DDQN:
         action_ = None
         if np.random.rand() < eps_threshold:
 
-            action = env.action_space.sample()
+            action = self.env.action_space.sample()
 
         else:
 
-            action_ = self.policy_network_output.eval(feed_dict={self.x_input: state})[0]
+            action_ = self.policy_network_output.eval(session = sess, feed_dict={self.x_input: state})[0]
             action = np.argmax(action_)
 
         return action
@@ -173,116 +174,3 @@ class DDQN:
 def preprocessing(image):
 	return image.reshape(-1,147)
 
-
-# dqn = DDQN()
-# RA = parser()
-
-# dqn.loss()
-
-# key_door = []
-
-# updateNetwork = 4
-# game_loss = 0
-
-
-# with tf.Session(config=config) as sess:
-#     sess.run(tf.global_variables_initializer())
-#     # Saver will help us to save our model
-#     saver = tf.train.Saver()
-
-#     with open("models_dueling/dresults.txt", "w") as f:
-#         f.write("Ep num \t Loss \t Reward \t Intrinsic Reward \n ")
-#         f.close()
-
-#     for each_epispode in range(50000):
-#         obs  = env.reset()["image"]
-#         obs  = preprocessing(obs)
-#         done = False
-#         in_trinsic  = 0
-#         counter  = 0
-#         total_reward_per_episode, total_loss_per_episode = 0, 0
-#         steps_episode = 0
-#         while not done:
-#             #plt.imshow(env.render())
-#             action = dqn.act(obs)
-
-#             open_door = env.door.is_open
-
-#             if env.carrying == None:
-#                 key = False
-#             else:
-#                 key = True
-
-#             intrinsic_reward,failDfa = RA.trace(key,open_door)
-
-#             in_trinsic += intrinsic_reward
-
-#             nextObservation,reward,done,_ = env.step(action)
-#             reward = reward*10
-#             nextObservation = nextObservation["image"]
-#             total_reward = reward + intrinsic_reward
-#             done = failDfa
-
-#             dqn.rememember(preprocessing(nextObservation), action, total_reward, obs, done)
-
-#             obs = preprocessing(nextObservation)
-
-#             total_reward_per_episode += reward
-
-#             if dqn.memory_class.sumtree.total_priority() > 1000 and dqn.memory_class.sumtree.total_priority() % updateNetwork== 0:
-#                 # we gonna update
-
-#                 # retreive the data
-
-#                 t_rewards ,t_dones,t_obs,t_nextObservations,t_actions = [],[],[],[],[]
-#                 idx, minibatch, ISWeights = dqn.sampleData()
-
-#                 for n_obs, n_reward, n_act, nObs, n_done in minibatch:
-#                     t_rewards.append(n_reward)
-#                     t_dones.append(n_done)
-#                     t_obs.append(nObs)
-#                     t_nextObservations.append(n_obs)
-#                     t_actions.append(n_act)
-
-#                 t_rewards = np.array(t_rewards)
-#                 t_dones = np.array(t_dones)
-#                 t_obs = np.squeeze(np.array(t_obs))
-#                 t_nextObservations = np.squeeze(np.array(t_nextObservations))
-#                 t_actions = np.array(t_actions)
-
-#                 # now we have all the mini batch we can first define our target
-#                 # we need to send nextObservation
-
-#                 t_output = dqn.target_network_output.eval(feed_dict={dqn.x_input:t_nextObservations})
-
-#                 target  = []
-
-#                 for i in range(len(t_output)):
-#                     target.append(t_rewards[i] + dqn.discount*np.max(t_output[i])*(1-t_dones[i]))
-
-#                 target = np.array(target)
-
-#                 game_loss, _ = sess.run([dqn.loss, dqn.optimizer],
-#                                        feed_dict={dqn.x_input: t_obs, dqn.actions: t_actions, dqn.target: target})
-
-#                 total_loss_per_episode += game_loss
-
-#             if counter > 1000:
-#                 sess.run(dqn.copy_weight)
-#                 counter = 0
-#             counter += 1
-#             steps_episode += 1
-
-#         # Save model every 5 episodes
-#         if each_epispode % 500 == 0:
-#             save_path = saver.save(sess, "models_dueling/dmodel.ckpt")
-#             print("Model Saved")
-
-#         # Saving results into txt
-#         with open("models_dueling/dresults.txt", "a") as f:
-#             f.write(str(each_epispode)+"\t\t"+str(round(total_loss_per_episode/steps_episode,4))+"\t\t"+str(round(total_reward_per_episode,2))+"\t\t"+str(round(in_trinsic,2))+"\n")
-#             f.close()
-
-#         if each_epispode !=0 and each_epispode % 20 == 0:
-#             print("After episode ",str(each_epispode)," the game loss is ",str(game_loss)," and reward is ",str(total_reward_per_episode))
-#             print("Intrinsic Reward ",str(in_trinsic))
