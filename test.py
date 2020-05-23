@@ -27,7 +27,7 @@ from flloat.parser.ltlf import LTLfParser
 
 from models.run_test import *
 
-
+from gym import wrappers
 
 
 """parsing and configuration"""
@@ -77,7 +77,8 @@ def main(args):
     env = gym.make(args.env)
     print("[*] success")
     if args.record:
-        env = gym.wrappers.Monitor(env, args.record, resume = True)
+        #env = gym.wrappers.Monitor(env, args.record, resume = True)
+        env = gym.wrappers.Monitor(env, "./vid", video_callable=lambda episode_id: True,force=True)
         print("recording")
     algo = str(re.search(r'algo_(.*?)_', model_name).group(1))
     print(type(algo))

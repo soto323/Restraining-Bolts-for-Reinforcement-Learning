@@ -24,3 +24,25 @@ $ python3 train.py
     --model_name
     --rand_seed 42
 ```
+
+# Testing
+
+```
+$ python3 test.py
+    --model_name
+    --record True
+```
+If you want to record, please remember to install ffmpeg
+
+On linux:
+```
+sudo apt-get install ffmpeg
+```
+
+On ubuntu:
+```
+brew install ffmpeg
+```
+
+On Windows:
+good luck
