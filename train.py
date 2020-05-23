@@ -38,6 +38,8 @@ def parse_args():
     parser.add_argument('--gui', type=bool, default=False, help='enable gui (nor recommended for training')
     parser.add_argument('--model_name', type=str, default=None, help='path to model if starting from checkpoint')
     parser.add_argument('--rand_seed', type=int, default=42, help='tf random seed')
+    parser.add_argument('--BATCH_SIZE', type=int, default=32, help='batch size (only supported for algo==a2c)')
+    
 
     return parser.parse_args()
 
@@ -86,7 +88,7 @@ def main(args):
     if args.algo in ['dqn', 'ddqn']:
         run(sess=sess, env=env, algo=args.algo, checkpoints_dir = checkpoints_dir, n_episodes=args.episodes, gui=args.gui)
     else:
-        run_a2c(sess=sess, env=env, algo=args.algo, checkpoints_dir = checkpoints_dir, n_episodes=args.episodes, gui=args.gui)
+        run_a2c(sess=sess, env=env, algo=args.algo, checkpoints_dir = checkpoints_dir, n_episodes=args.episodes, gui=args.gui, BATCH_SIZE=args.BATCH_SIZE)
 
 
 

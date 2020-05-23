@@ -18,14 +18,13 @@ from models.parser import parser
 
 
 
-def run_a2c(sess, env, algo, checkpoints_dir, n_episodes=100000, gui=False):
+def run_a2c(sess, env, algo, checkpoints_dir, n_episodes=100000, gui=False, BATCH_SIZE = 32):
 
     fmt = '\n\n\n[*] Succesfully loaded: {}\n\n\n'.format(algo)
     from models.a2c.a2c import actorCritic, preprocessing
     ac_network = actorCritic(env)
     print(fmt)
     ac_network.actor_critic_loss()
-    BATCH_SIZE = 32
          
     RA = parser()
 
