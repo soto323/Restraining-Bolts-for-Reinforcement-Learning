@@ -38,8 +38,8 @@ def run_a2c(sess, env, algo, checkpoints_dir, n_episodes=100000, gui=False, BATC
         print("[*] failed to load checkpoints")
         sess.run(tf.global_variables_initializer())
 
-    #print("[*] creating new graphs")
-    #summary_writer = tf.summary.FileWriter('./graphs', sess.graph)
+    print("[*] creating new graphs")
+    summary_writer = tf.summary.FileWriter('./graphs', sess.graph)
     saver = tf.train.Saver()
     #S_ = tf.Summary()
 
@@ -116,7 +116,12 @@ def run_a2c(sess, env, algo, checkpoints_dir, n_episodes=100000, gui=False, BATC
                                             feed_dict  = {ac_network.x_input : save_states,
                                                           ac_network.target : target,
                                                           ac_network.actions : onehotEncodeAction})
-                
+
+                summary = tf.Summary()
+                summary.value.add(tag='loss_a2c', simple_value=np.sum(total_loss_actor_critic))
+                summary_writer.add_summary(summary, each_episode)
+                summary_writer.flush()
+
                 count_batch = 0
 
                 #resetting
@@ -131,6 +136,11 @@ def run_a2c(sess, env, algo, checkpoints_dir, n_episodes=100000, gui=False, BATC
             print("After episode ",str(each_episode)," the total loss  ",str(np.sum(total_loss_actor_critic))," And reward ",str(total_reward))
             print("Intrinsic reward after episode ",str(each_episode), "  is ",str(in_trinsic))
             total_reward = 0
+
+        if each_episode % 100 == 0:
+            checkpoint_save_path = saver.save(sess, '{}/Episode_{}.ckpt'.format(checkpoints_dir, each_episode))
+            print('Model is saved at {}!'.format(checkpoint_save_path))
+
             
             
                 
@@ -169,8 +179,8 @@ def run(sess, env, algo, checkpoints_dir, n_episodes=100000, gui=False):
         print("[*] failed to load checkpoints")
         sess.run(tf.global_variables_initializer())
 
-    #print("[*] creating new graphs")
-    #summary_writer = tf.summary.FileWriter('./graphs', sess.graph)
+    print("[*] creating new graphs")
+    summary_writer = tf.summary.FileWriter('./graphs', sess.graph)
     saver = tf.train.Saver()
     #S_ = tf.Summary()
 
@@ -241,6 +251,11 @@ def run(sess, env, algo, checkpoints_dir, n_episodes=100000, gui=False):
                                                    dqn.actions:t_actions,
                                                    dqn.target:target}
                                         )
+
+                summary = tf.Summary()
+                summary.value.add(tag='loss_{}'.format(algo), simple_value=game_loss)
+                summary_writer.add_summary(summary, each_episode)
+                summary_writer.flush()
                 
             if counter > 500:
                 sess.run(dqn.copy_weight)
