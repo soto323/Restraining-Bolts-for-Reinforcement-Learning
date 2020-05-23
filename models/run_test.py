@@ -38,19 +38,8 @@ def run_a2c(sess, env, algo, checkpoints_dir, n_episodes=100000, gui=False, BATC
         print("[*] failed to load checkpoints")
         sess.run(tf.global_variables_initializer())
 
-    print("[*] creating new graphs")
-    summary_writer = tf.summary.FileWriter('./graphs', sess.graph)
-    saver = tf.train.Saver()
-    #S_ = tf.Summary()
-
     total_reward = 0
-
-    for each_episode in tqdm(range(episode_to_restore, episode_to_restore+n_episodes), total=n_episodes):
-        
-        # we will use monte carlo approach
-        # that is we first record the data 
-        # than use it 
-        
+    for each_episode in range(20): #numner of videos
         done = False
         in_trinsic  = 0
         state = env.reset()["image"]
@@ -63,8 +52,11 @@ def run_a2c(sess, env, algo, checkpoints_dir, n_episodes=100000, gui=False, BATC
         c_loss = 0
         total_loss_actor_critic = 0
         count_batch = 0
-
+        steps=0
         while not done:
+            steps+=1
+            if gui: 
+                plt.imshow(env.render())
         
             # first thing we need to choose the action
             action = ac_network.chooseAction(state, sess)
@@ -81,70 +73,12 @@ def run_a2c(sess, env, algo, checkpoints_dir, n_episodes=100000, gui=False, BATC
             intrinsic_reward,failDfa = RA.trace(key,open_door)
             in_trinsic += intrinsic_reward
             t_reward  = reward +intrinsic_reward
-            
-            # now we gonna store the trajectory 
-            
-            #save_states = np.append(save_states, state)
-            save_states.append(state)
-            state = preprocessing(next_state)
-            #save_nextStates = np.vstack(save_nextStates, state, axis=0)
-            save_nextStates.append(state)
-            save_actions = np.append(save_actions, action)
-            save_rewards = np.append(save_rewards, t_reward)
-            save_dones = np.append(save_dones, done)
-            
-            total_reward += reward
-        
-            # done = failDfa
 
-            if count_batch % BATCH_SIZE == 0 and count_batch!=0:
-                save_nextStates = np.array(save_nextStates)
-                save_states = np.array(save_states)
-
-                value_predicted  = ac_network.act_value.eval(session = sess, feed_dict={ac_network.x_input:save_nextStates})
-                target  = []
-                save_rewards = (save_rewards  - save_rewards.mean())/(save_rewards.std() + np.finfo(np.float32).eps)
-
-                for i in range(len(value_predicted)):
-                    target.append(save_rewards[i] + ac_network.discount*value_predicted[i]*(1-save_dones[i]))
-
-                target = np.array(target)
-                save_actions = save_actions.astype(np.int)
-                action_convert = save_actions.reshape(-1)
-                onehotEncodeAction = np.eye(ac_network.action_size)[action_convert]
-                total_loss_actor_critic, _ = sess.run([ac_network.total_loss, ac_network.total_optimizer],
-                                            feed_dict  = {ac_network.x_input : save_states,
-                                                          ac_network.target : target,
-                                                          ac_network.actions : onehotEncodeAction})
-
-                summary = tf.Summary()
-                summary.value.add(tag='loss_a2c', simple_value=np.sum(total_loss_actor_critic))
-                summary_writer.add_summary(summary, each_episode)
-                summary_writer.flush()
-
-                count_batch = 0
-
-                #resetting
-                save_actions, save_rewards, save_dones = [np.empty([0]) for i in range(3)]
-                save_states, save_nextStates = [], [] #TO DO: change this numpy
-
-            count_batch+=1
-
-        
-        if each_episode % 20 == 0 and each_episode!=0:
-            
-            print("After episode ",str(each_episode)," the total loss  ",str(np.sum(total_loss_actor_critic))," And reward ",str(total_reward))
-            print("Intrinsic reward after episode ",str(each_episode), "  is ",str(in_trinsic))
-            total_reward = 0
-
-        if each_episode % 100 == 0:
-            checkpoint_save_path = saver.save(sess, '{}/Episode_{}.ckpt'.format(checkpoints_dir, each_episode))
-            print('Model is saved at {}!'.format(checkpoint_save_path))
+            print("In %d steps we got %.3f total reward and %.3f instrinsic reward" % (steps, t_reward, intrinsic_reward))
 
             
             
-                
-            
+    
             
                     
             
@@ -192,8 +126,9 @@ def run(sess, env, algo, checkpoints_dir, n_episodes=100000, gui=False):
         done = False
         in_trinsic  = 0
         total_reward_per_episode = 0
-        counter  = 0
+        steps  = 0
         while not done:
+            steps+=1
             if gui: 
                 plt.imshow(env.render())
 
@@ -219,6 +154,8 @@ def run(sess, env, algo, checkpoints_dir, n_episodes=100000, gui=False):
             obs =  preprocessing(nextObservation)
             
             total_reward_per_episode += reward
+
+            print("In %d steps we got %.3f total reward and %.3f instrinsic reward" % (steps, total_reward_per_episode, intrinsic_reward))
 
 
 

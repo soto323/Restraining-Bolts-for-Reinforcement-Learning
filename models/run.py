@@ -65,7 +65,8 @@ def run_a2c(sess, env, algo, checkpoints_dir, n_episodes=100000, gui=False, BATC
         count_batch = 0
 
         while not done:
-        
+            if gui: 
+                plt.imshow(env.render())
             # first thing we need to choose the action
             action = ac_network.chooseAction(state, sess)
             
