@@ -142,7 +142,7 @@ class actorCritic:
         
  
 def preprocessing(image):
-    img =  PIL.Image.fromarray(image).convert("L")
+    img = PIL.Image.fromarray(image).convert("L")
     img = np.array(img).reshape(7,7,1)
     return img
 
