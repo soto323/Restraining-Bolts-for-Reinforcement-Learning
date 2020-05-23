@@ -40,7 +40,7 @@ sudo apt-get install ffmpeg
 ```
 
 On ubuntu:
-```
+```ls
 brew install ffmpeg
 ```
 
