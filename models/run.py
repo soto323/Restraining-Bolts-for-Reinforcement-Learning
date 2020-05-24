@@ -1,5 +1,9 @@
 import numpy as np
+
+
 import tensorflow as tf
+tf.disable_v2_behavior()
+
 from collections import deque
 import PIL
 import random
@@ -11,9 +15,9 @@ from gym_minigrid.wrappers import *
 import sys
 sys.path.append("..")
 
-from models.utils import *
+from models.utils import load_checkpoint, summary
 
-from models.common import *
+from models.common import sumtree, memory
 from models.parser import parser
 
 

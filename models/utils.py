@@ -1,7 +1,7 @@
-import tensorflow as tf
-import os
-import matplotlib.pyplot as plt
-import numpy as np
+# import tensorflow as tf
+# import os
+# import matplotlib.pyplot as plt
+# import numpy as np
 
 def load_checkpoint(ckpt_dir_or_file, session, var_list=None):
     """
