@@ -5,7 +5,7 @@ import tensorflow.compat.v1 as tf
 tf.disable_v2_behavior()
 
 from collections import deque
-import PILip
+import PIL
 import random
 import matplotlib.pyplot as plt
 import flloat
