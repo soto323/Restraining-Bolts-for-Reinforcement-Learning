@@ -1,5 +1,5 @@
 import numpy as np
-
+import os
 
 import tensorflow.compat.v1 as tf
 tf.disable_v2_behavior()
@@ -42,12 +42,15 @@ def run_a2c(sess, env, algo, checkpoints_dir, n_episodes=100000, gui=False, BATC
         sess.run(tf.global_variables_initializer())
 
     print("[*] creating new graphs")
+    # graph_dir = os.path.join(checkpoints_dir, 'graphs')
+    # if not os.path.exists(graph_dir):
+    #     os.mkdir(graph_dir)
     summary_writer = tf.summary.FileWriter('./graphs', sess.graph)
     saver = tf.train.Saver()
     #S_ = tf.Summary()
 
     total_reward = 0
-
+    last_n_rewards = []
     for each_episode in tqdm(range(episode_to_restore, episode_to_restore+n_episodes), total=n_episodes):
         
         # we will use monte carlo approach
@@ -66,6 +69,7 @@ def run_a2c(sess, env, algo, checkpoints_dir, n_episodes=100000, gui=False, BATC
         c_loss = 0
         total_loss_actor_critic = 0
         count_batch = 0
+        total_reward_per_episode = 0
 
         while not done:
             if gui: 
@@ -82,9 +86,10 @@ def run_a2c(sess, env, algo, checkpoints_dir, n_episodes=100000, gui=False, BATC
 
             key = False if env.carrying == None else True
 
-            intrinsic_reward,failDfa = RA.trace(key,open_door)
+            intrinsic_reward, failDfa = RA.trace(key,open_door)
             in_trinsic += intrinsic_reward
             t_reward  = reward +intrinsic_reward
+
             
             # now we gonna store the trajectory 
             
@@ -98,6 +103,7 @@ def run_a2c(sess, env, algo, checkpoints_dir, n_episodes=100000, gui=False, BATC
             save_dones = np.append(save_dones, done)
             
             total_reward += reward
+            total_reward_per_episode+=reward
         
             # done = failDfa
 
@@ -141,9 +147,27 @@ def run_a2c(sess, env, algo, checkpoints_dir, n_episodes=100000, gui=False, BATC
             print("Intrinsic reward after episode ",str(each_episode), "  is ",str(in_trinsic))
             total_reward = 0
 
+            summary = tf.Summary()
+            summary.value.add(tag='20_ep_average', simple_value=np.mean(last_n_rewards))
+            summary.value.add(tag='20_ep_sum', simple_value=np.sum(last_n_rewards))
+            summary_writer.add_summary(summary, each_episode)
+            summary_writer.flush()
+            last_n_rewards = []
+
+
         if each_episode % 100 == 0:
             checkpoint_save_path = saver.save(sess, '{}/Episode_{}.ckpt'.format(checkpoints_dir, each_episode))
             print('Model is saved at {}!'.format(checkpoint_save_path))
+
+
+
+        last_n_rewards.append(total_reward_per_episode)
+        summary = tf.Summary()
+        summary.value.add(tag='Episode_reward', simple_value=total_reward_per_episode)
+        summary.value.add(tag='intrinsic_reward', simple_value=intrinsic_reward)
+        summary_writer.add_summary(summary, each_episode)
+        summary_writer.flush()
+
 
             
             
@@ -183,7 +207,9 @@ def run(sess, env, algo, checkpoints_dir, n_episodes=100000, gui=False):
         print("[*] failed to load checkpoints")
         sess.run(tf.global_variables_initializer())
 
-    print("[*] creating new graphs")
+    # graph_dir = os.path.join(checkpoints_dir, 'graphs')
+    # if not os.path.exists(graph_dir):
+    #     os.mkdir(graph_dir)
     summary_writer = tf.summary.FileWriter('./graphs', sess.graph)
     saver = tf.train.Saver()
     #S_ = tf.Summary()
@@ -192,6 +218,7 @@ def run(sess, env, algo, checkpoints_dir, n_episodes=100000, gui=False):
     updateNetwork = 4
     game_loss = 0
 
+    last_n_rewards = []
     for each_episode in tqdm(range(episode_to_restore, episode_to_restore+n_episodes), total=n_episodes):
         
         obs  = env.reset()["image"]
@@ -267,9 +294,19 @@ def run(sess, env, algo, checkpoints_dir, n_episodes=100000, gui=False):
                 
             counter += 1
         
+
+
+        
         if each_episode !=0 and each_episode % 20 == 0:
-            print("After episode ",str(each_episode)," the game loss is ",str(game_loss)," and reward is ",str(total_reward_per_episode))
+            print("After episode ",str(each_episode)," the game loss is ",str(game_loss)," and ave reward: ",str(np.mean(last_n_rewards)))
             print("Intrinsic Reward ",str(in_trinsic))
+            
+            summary = tf.Summary()
+            summary.value.add(tag='20_ep_average', simple_value=np.mean(last_n_rewards))
+            summary.value.add(tag='20_ep_sum', simple_value=np.sum(last_n_rewards))
+            summary_writer.add_summary(summary, each_episode)
+            summary_writer.flush()
+            last_n_rewards = []
 
 
         if each_episode % 100 == 0:
@@ -277,10 +314,14 @@ def run(sess, env, algo, checkpoints_dir, n_episodes=100000, gui=False):
             print('Model is saved at {}!'.format(checkpoint_save_path))
 
 
+        last_n_rewards.append(total_reward_per_episode)
+        summary = tf.Summary()
+        summary.value.add(tag='Episode_reward', simple_value=total_reward_per_episode)
+        summary.value.add(tag='intrinsic_reward', simple_value=intrinsic_reward)
+        summary_writer.add_summary(summary, each_episode)
+        summary_writer.flush()
 
-
-
-
+    
 
 
 
