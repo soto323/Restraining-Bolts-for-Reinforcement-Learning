@@ -129,8 +129,8 @@ class actorCritic:
         self.grad  = zip(norm_grad,self.trainable_param)
 
 
-        # now we can optimize 
-        self.total_optimizer = tf.train.GradientDescentOptimizer(learning_rate=1e-5).apply_gradients(self.grad)
+        #self.total_optimizer = tf.train.GradientDescentOptimizer(learning_rate=1e-5).apply_gradients(self.grad)
+        self.total_optimizer = tf.train.RMSPropOptimizer(learning_rate=1e-5).apply_gradients(self.grad)
         # self.critic_optimizer= tf.train.AdamOptimizer(learning_rate=0.0001).minimize(self.critic_loss)
         
     
