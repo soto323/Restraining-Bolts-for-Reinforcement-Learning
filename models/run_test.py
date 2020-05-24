@@ -74,7 +74,8 @@ def run_a2c(sess, env, algo, checkpoints_dir, n_episodes=100000, gui=False, BATC
             in_trinsic += intrinsic_reward
             t_reward  = reward +intrinsic_reward
 
-            print("In %d steps we got %.3f total reward and %.3f instrinsic reward" % (steps, t_reward, intrinsic_reward))
+            print(action)
+            #print("In %d steps we got %.3f total reward and %.3f instrinsic reward" % (steps, t_reward, intrinsic_reward))
 
             
             

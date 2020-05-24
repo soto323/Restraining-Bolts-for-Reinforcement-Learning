@@ -141,9 +141,9 @@ class actorCritic:
         return np.random.choice(self.action_size,p=action_prob)
     
     def chooseActionTest(self, state, sess):
-	# here we choose the action for testing phase
-	action_prob = self.policyparam.eval(session = sess, feed_dict={self.x_input:[state]})[0]
-	return np.argmax(action_prob)
+        # here we choose the action for testing phase
+        action_prob = self.policyparam.eval(session = sess, feed_dict={self.x_input:[state]})[0]
+        return np.argmax(action_prob)
  
 def preprocessing(image):
     img = PIL.Image.fromarray(image).convert("L")
