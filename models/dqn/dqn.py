@@ -152,7 +152,7 @@ class DQN:
 
         # now we can apply the clipped grad values 
 
-        self.optimizer = tf.train.AdamOptimizer(learning_rate=0.0001)
+        self.optimizer = tf.train.RMSPropOptimizer(learning_rate=1e-5)
         self.optimizer =  self.optimizer.apply_gradients(zip(clipped_grad,self.policy_network_param))
 
     def rememember(self,nextObservation,action,reward,observation,done):

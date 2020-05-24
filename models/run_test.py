@@ -160,7 +160,7 @@ def run(sess, env, algo, checkpoints_dir, n_episodes=100000, gui=False):
             
             total_reward_per_episode += reward
 
-            print("In %d steps we got %.3f total reward and %.3f instrinsic reward" % (steps, total_reward_per_episode, intrinsic_reward))
+            print("In %d steps we got %.3f total reward and %.3f instrinsic reward. %.3f ep" % (steps, total_reward_per_episode, intrinsic_reward, each_episode))
 
 
 
