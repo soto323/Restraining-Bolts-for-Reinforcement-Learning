@@ -1,18 +1,21 @@
-# import numpy as np
-# import tensorflow as tf
-# from collections import deque
-# import PIL
-# import random
-# import matplotlib.pyplot as plt
-# import flloat
-# from flloat.parser.ltlf import LTLfParser
-# from tqdm import tqdm
-# from gym_minigrid.wrappers import *
+import numpy as np
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
+from collections import deque
+import PIL
+import random
+import matplotlib.pyplot as plt
+import flloat
+from flloat.parser.ltlf import LTLfParser
+from tqdm import tqdm
+from gym_minigrid.wrappers import *
 
 # from models.utils import *
 
 # from models.common import *
 # from models.parser import parser
+from models.parser import parser
+from models.common import sumtree, memory
 
 class DQN:
     'new'

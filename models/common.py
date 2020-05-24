@@ -1,12 +1,13 @@
-# import numpy as np
-# import tensorflow as tf
-# from collections import deque
-# import PIL
-# import random
-# import matplotlib.pyplot as plt
-# import flloat
-# from flloat.parser.ltlf import LTLfParser
-# from tqdm import tqdm
+import numpy as np
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
+from collections import deque
+import PIL
+import random
+import matplotlib.pyplot as plt
+import flloat
+from flloat.parser.ltlf import LTLfParser
+from tqdm import tqdm
 
 class sumtree:
     
