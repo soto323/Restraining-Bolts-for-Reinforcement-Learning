@@ -31,6 +31,7 @@ $ python3 train.py
 $ python3 test.py
     --model_name
     --record True
+    --gui True
 ```
 If you want to record, please remember to install ffmpeg
 

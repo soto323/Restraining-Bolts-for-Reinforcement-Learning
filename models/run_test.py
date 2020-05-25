@@ -44,11 +44,11 @@ def run_a2c(sess, env, algo, checkpoints_dir, n_episodes=100000, gui=False, BATC
 
     total_reward = 0
     for each_episode in range(20): #numner of videos
-        done = False
+        
         in_trinsic  = 0
         state = env.reset()["image"]
         state  = preprocessing(state)
-        
+        done = False
         # these are temporary data storage lists 
         save_actions, save_rewards, save_dones = [np.empty([0]) for i in range(3)]
         save_states, save_nextStates = [], [] #TO DO: change this numpy
@@ -78,7 +78,7 @@ def run_a2c(sess, env, algo, checkpoints_dir, n_episodes=100000, gui=False, BATC
             in_trinsic += intrinsic_reward
             t_reward  = reward +intrinsic_reward
 
-            print(action)
+           print(action)
             #print("In %d steps we got %.3f total reward and %.3f instrinsic reward" % (steps, t_reward, intrinsic_reward))
 
             
@@ -143,6 +143,7 @@ def run(sess, env, algo, checkpoints_dir, n_episodes=100000, gui=False):
             key = False if env.carrying == None else True
 
             intrinsic_reward, failDfa = RA.trace(key,open_door)
+            done = failDfa
             
             in_trinsic += intrinsic_reward
 
@@ -152,7 +153,7 @@ def run(sess, env, algo, checkpoints_dir, n_episodes=100000, gui=False):
             #rewards
             total_reward = reward + intrinsic_reward
             
-            done = failDfa
+           
 
             dqn.rememember(preprocessing(nextObservation),action,total_reward,obs,done)
         
@@ -160,7 +161,7 @@ def run(sess, env, algo, checkpoints_dir, n_episodes=100000, gui=False):
             
             total_reward_per_episode += reward
 
-            print("In %d steps we got %.3f total reward and %.3f instrinsic reward. %.3f ep" % (steps, total_reward_per_episode, intrinsic_reward, each_episode))
+            print("In %d steps we got %.3f total reward and %.3f instrinsic reward" % (steps, total_reward_per_episode, intrinsic_reward))
 
 
 

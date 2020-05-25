@@ -1,6 +1,0 @@
-model_checkpoint_path: "Episode_9900.ckpt"
-all_model_checkpoint_paths: "Episode_9500.ckpt"
-all_model_checkpoint_paths: "Episode_9600.ckpt"
-all_model_checkpoint_paths: "Episode_9700.ckpt"
-all_model_checkpoint_paths: "Episode_9800.ckpt"
-all_model_checkpoint_paths: "Episode_9900.ckpt"
