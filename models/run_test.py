@@ -78,7 +78,7 @@ def run_a2c(sess, env, algo, checkpoints_dir, n_episodes=100000, gui=False, BATC
             in_trinsic += intrinsic_reward
             t_reward  = reward +intrinsic_reward
 
-           print(action)
+            print(action)
             #print("In %d steps we got %.3f total reward and %.3f instrinsic reward" % (steps, t_reward, intrinsic_reward))
 
             
@@ -122,7 +122,7 @@ def run(sess, env, algo, checkpoints_dir, n_episodes=100000, gui=False):
     updateNetwork = 4
     game_loss = 0
     
-    for each_episode in range(20): #numner of videos
+    for each_episode in range(5): #numner of videos
         obs  = env.reset()["image"]
         obs  = preprocessing(obs)
         total_steps = 0
@@ -133,7 +133,7 @@ def run(sess, env, algo, checkpoints_dir, n_episodes=100000, gui=False):
         total_reward_per_episode = 0
         steps  = 0
         while not done:
-            steps+=1
+            
             if gui: 
                 plt.imshow(env.render())
 
@@ -161,8 +161,8 @@ def run(sess, env, algo, checkpoints_dir, n_episodes=100000, gui=False):
             
             total_reward_per_episode += reward
 
-            print("In %d steps we got %.3f total reward and %.3f instrinsic reward" % (steps, total_reward_per_episode, intrinsic_reward))
-
+            print("ep %d done: %s \tIn %d steps we got %.3f total reward and %.3f instrinsic reward" % (each_episode, done, steps, total_reward_per_episode, intrinsic_reward))
+            steps+=1
 
 
 
