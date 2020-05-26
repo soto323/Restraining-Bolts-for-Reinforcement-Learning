@@ -10,7 +10,7 @@
 3. Run setup from the repository root directory
     ```bash
     python3 setup.py install
-    ``` 
+    ```
     
     
 # Training
@@ -24,6 +24,10 @@ $ python3 train.py
     --model_name
     --rand_seed 42
 ```
+
+Problems and solutions of training Deep Neural Network for RB:[deep_learning.md](deep_learning.md).
+
+Overleaf source code for the presentation:  https://www.overleaf.com/read/prtnncqwtszz
 
 # Testing
 
